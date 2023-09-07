@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.min.edu.model.BoardImpl">
+
+<!-- 부모가 되는 DTO -->
+<resultMap type="com.min.edu.dto.RootBoardDto" id="rootMap">
+	<result column="SEQ" property="seq"/>
+	<result column="ID" property="id"/>
+	<result column="TITLE" property="title"/>
+	<result column="CONTENT" property="content"/>
+	<result column="DELFLAG" property="delflag"/>
+	<result column="REGDATE" property="regdate"/>
+	<collection property="rDto" resultMap="replyMap"/>
+</resultMap>
+
+<!-- 자식의 DTO -->
+<resultMap type="com.min.edu.dto.ReplyBoardDto" id="replyMap">
+	<result column="SEQ" property="seq"/>
+	<result column="REF" property="ref"/>
+	<result column="P_REGDATE" property="p_regdate"/>
+	<result column="P_ID" property="p_id"/>
+	<result column="P_DELFLAG" property="p_delflag"/>
+	<result column="P_CONTENT" property="p_content"/>
+</resultMap>
+
+
+<!-- 전체 글 조회 -->
+<select id="rootSelect" resultMap="rootMap">
+	SELECT SEQ, ID, TITLE, DELFLAG, REGDATE
+	FROM ROOTBOARD
+</select>
+
+<!-- 상세 조회 -->
+<select id="detailSelect" parameterType="java.lang.Integer" resultMap="rootMap">
+	SELECT r.SEQ , ID, TITLE, CONTENT, REGDATE, 
+		"REF" , P_ID ,P_CONTENT , P_REGDATE 
+		FROM ROOTBOARD r LEFT JOIN REPLYBOARD r2 
+		ON r.SEQ = r2.SEQ
+</select>
+
+<!-- Root글 입력 -->
+<insert id="insertRoot" parameterType="java.util.Map">
+	INSERT INTO ROOTBOARD
+		(SEQ, ID, TITLE, CONTENT, DELFLAG, REGDATE)
+		VALUES((SELECT NVL(MAX(SEQ),0)+1 FROM ROOTBOARD), #{id}, #{title},
+				#{content}, 'N', SYSDATE)
+</insert>
+
+<!-- reply글 입력 -->
+<insert id="insertReply" parameterType="java.util.Map">
+	INSERT INTO REPLYBOARD
+	(SEQ, "REF", P_ID, P_CONTENT, P_DELFLAG, P_REGDATE)
+	VALUES(#{seq}, (SELECT NVL(MAX("REF"),0)+1 FROM REPLYBOARD), #{p_id},
+		   #{p_content}, 'N', SYSDATE)
+</insert>
+
+<!-- root글 수정 -->
+<update id="updateRoot" parameterType="java.util.Map">
+	UPDATE ROOTBOARD
+		SET TITLE=#{title}, CONTENT=#{content}
+		WHERE SEQ=#{seq}
+</update>
+
+<!-- root글 삭제 -->
+<update id="deleteRoot" parameterType="java.lang.Integer">
+	UPDATE ROOTBOARD SET DELFLAG = 'Y' WHERE SEQ=#{seq}
+</update>
+
+<!-- 답글 수정 -->
+<update id="updateReply" parameterType="java.util.Map">
+	UPDATE REPLYBOARD SET P_CONTENT=#{p_content} WHERE REF=#{ref}
+</update>
+
+<!-- 답글 삭제 -->
+<update id="deleteReply" parameterType="java.lang.Integer">
+	UPDATE REPLYBOARD SET P_DELFLAG = 'Y' WHERE "REF"={#ref}
+</update>
+
+</mapper>
