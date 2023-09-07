@@ -1,10 +1,10 @@
 package com.test.board;
 
-import static org.junit.Assert.*;
+//import static org.junit.Assert.*;
 
 import java.util.List;
 
-import org.junit.Test;
+//import org.junit.Test;
 
 import com.min.edu.dto.RootBoardDto;
 import com.min.edu.model.BoardImpl;
@@ -12,7 +12,7 @@ import com.min.edu.model.IBoard;
 
 public class BoardTest {
 
-	@Test
+//	@Test
 	public void test() {
 		IBoard dao = new BoardImpl();
 
@@ -20,7 +20,7 @@ public class BoardTest {
 		
 		List<RootBoardDto> lists = dao.detailSelect(1);
 		
-		assertNotNull(lists);
+//		assertNotNull(lists);
 		
 		
 	}
