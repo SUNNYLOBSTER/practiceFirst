@@ -30,5 +30,8 @@ public interface IBoard {
 	
 //	답글 삭제
 	public boolean deleteReply(int ref);
+	
+	//호호
+	public boolean testest();
 
 }

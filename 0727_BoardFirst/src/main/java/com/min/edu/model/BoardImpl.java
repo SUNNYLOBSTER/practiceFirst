@@ -85,4 +85,10 @@ public class BoardImpl implements IBoard {
 		return row>0?true:false;
 	}
 
+	@Override
+	public boolean testest() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }
